@@ -176,7 +176,11 @@ for hi=1:ndh
             continue;
         end
         pvc(CLUST==siz) = pvox_clust(V, Rd, siz, threshs(hi), Zest);
-        PVC(:,:,:,hi)=pvc;
+        if ndims(pvc)<3
+            PVC(:,:,hi)=pvc;
+        else
+            PVC(:,:,:,hi)=pvc;
+        end
         
     end 
 end
@@ -186,7 +190,11 @@ end
 pTFCE=zeros(size(imgZ));
 for i=1:size(imgZ(:))
     [x,y,z]=ind2sub(size(imgZ), i);
-    pTFCE(x,y,z) = exp( -aggregate_logpvals(-log(PVC(x, y, z,:)), dh) );
+    if ndims(imgZ)<3
+        pTFCE(x,y) = exp( -aggregate_logpvals(-log(PVC(x, y,:)), dh) );
+    else
+        pTFCE(x,y,z) = exp( -aggregate_logpvals(-log(PVC(x, y, z,:)), dh) );
+    end
 end
 
 % CONVERT BACK TO Z-SCORE
